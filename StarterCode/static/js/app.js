@@ -1,16 +1,28 @@
 //fetch data and read JSON file
 d3.json("samples.json").then((data) => {
+    console.log(data);
+    //append Name options to list
     //select html
     var dropDown = d3.select('#selDataset');
+    data.names.forEach((name) => {
+        dropDown.append('option').text(name).property('value', name);
+    });
     // replace "onchange function"
     dropDown.on("change", function() {
+        
+        //From Samples Array
         // get value attribute of select field
         const sampleID = dropDown.property("value");
+        console.log(sampleID);
 
-        // find the sample in json collection
+        // find the sample array in json collection
         const sample = data.samples.find((s) => s.id === sampleID);
-
-        // slice the top 10 of each array
+        console.log(sample);
+        //Find Metadata Array in json collection
+        var demoGraphic = d3.select("#sample-metadata");
+        Object.entries(sampleID).forEach(([key, value]) => demoGraphic.append("h4").text(`${key}: ${value}`));
+       
+        // slice the top 10 of each from Sample array
         const toptenIDs = sample.otu_ids.slice(0,10);
         const toptenValues = sample.sample_values.slice(0,10);
         const toptenLabels = sample.otu_labels.slice(0,10);
@@ -27,13 +39,23 @@ d3.json("samples.json").then((data) => {
             xaxis: { title: "Values" },
             yaxis: { title: "OTU IDs" }
         });
-    });
-    console.log(data);
-    //append to list
-    data.names.forEach((name) => {
-        dropDown.append('option').text(name).property('value', name);
-    })
-    
+             // bubble chart configuration
+            Plotly.newPlot("bubble", [{
+                y: sample.sample_values, 
+                x: sample.otu_ids,
+                text: sample.otu_labels,
+                mode: "markers",
+                marker: { 
+                    size: sample.sample_values, 
+                    color: sample.otu_ids,
+                    colorscale: "Earth"
+                }
+            }], {
+                title: "Bacteria Diversity",
+                xaxis: { title: "Values" },
+                yaxis: { title: "OTU IDs" }
+                });
+    }); 
 });
 
 // function optionChange(sampleID) {
@@ -64,35 +86,3 @@ d3.json("samples.json").then((data) => {
         
 //     })
 // };
-// d3.json("samples.json").then((data) => {
-
-//     console.log(data);
-//     var nameIDs = data.names;
-//     var metadata = data.metadata;
-//     var sample = data.samples;
-//     var sampleID = data.samples[0].id;
-//     console.log(sampleID);
-    // var otu_ids = result.otu_ids;
-    // var otu_labels = result.otu_labels;
-    // var sample_values = result.sample_values; 
-
-//});
-    // function optionChange (value){
-    //     console.log(value);
-    // }
-    // //create traces
-    // var trace1 = {
-    //     x: otu_ids,
-    //     y: sample_values,
-    //     type: "bar",
-    //     name: otc_labels
-    // };
-    // //create data for plot
-    // var data = [trace1];
-    // //create layout attributes
-    // var layout = {
-    //     title: "Bacteria Diversity",
-    //     xaxis: {title: "Participant IDs"},
-    //     yaxis: {title: "Values"}
-    // };
-    // Plotly.newPlot("bar", data, layout);
