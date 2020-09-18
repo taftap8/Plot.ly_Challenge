@@ -18,10 +18,18 @@ d3.json("samples.json").then((data) => {
         // find the sample array in json collection
         const sample = data.samples.find((s) => s.id === sampleID);
         console.log(sample);
-        //Find Metadata Array in json collection
+
+        // //Find Metadata Array in json collection
         var demoGraphic = d3.select("#sample-metadata");
-        Object.entries(sampleID).forEach(([key, value]) => demoGraphic.append("h4").text(`${key}: ${value}`));
-       
+        // demoGraphic.html("");
+        // //TEST
+        // console.log(data.metadata);
+        // //const metaData = data.metadata[0].find((s) => s.id === sampleID);
+        var metaData = data.metadata.filter((s) => s.id == sampleID);
+        console.log(metaData);                                                                                                                             
+        Object.entries(metaData[0]).forEach(([key, value]) => demoGraphic.append("h4").html(`<strong>${key}</strong>: ${value}`));
+        console.log(demoGraphic);
+
         // slice the top 10 of each from Sample array
         const toptenIDs = sample.otu_ids.slice(0,10);
         const toptenValues = sample.sample_values.slice(0,10);
@@ -52,8 +60,8 @@ d3.json("samples.json").then((data) => {
                 }
             }], {
                 title: "Bacteria Diversity",
-                xaxis: { title: "Values" },
-                yaxis: { title: "OTU IDs" }
+                xaxis: { title: "OTU_IDs" },
+                yaxis: { title: "Values" }
                 });
     }); 
 });
